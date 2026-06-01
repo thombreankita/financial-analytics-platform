@@ -38,7 +38,7 @@ except RuntimeError as e:
 
 try:
     file = open("employee.txt")
-    print(employee[salary]) #When the file do not exist this line is not executed as the except stmt would be searched for.
+    print(employee[salary]) # type: ignore #When the file do not exist this line is not executed as the except stmt would be searched for.
 except FileNotFoundError:
     print("File dosen't exist");
 except KeyError:
