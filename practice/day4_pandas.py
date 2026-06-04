@@ -17,8 +17,8 @@ def get_positive_transactions(df: pd.DataFrame) -> pd.DataFrame:
     if "amount" not in df.columns:
 
         raise ValueError("amount column missing")
-
-    return df[df["amount"] > 0]
+    print(df[df["amount"] > 0])
+    return df[df["amount"] > 0] # df["amount"] > 0 creates a list 
 #fpath = Path("/d/Financial-analytics-platform/data/raw/PS_20174392719_1491204439457_log.csv")
 
 fpath = ( Path(__file__).resolve().parent.parent /"data"/"raw"/"PS_20174392719_1491204439457_log.csv")
