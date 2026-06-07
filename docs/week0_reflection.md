@@ -10,3 +10,12 @@ python -m ingestion.ingest
 Not as:
 bashcd d:/Financial-analytics-platform/ingestion
 python ingest.py
+
+When you run python -m ingestion.ingest from the project root — what do you think Python sets __name__ to inside ingest.py? Is it '__main__' or 'ingestion.ingest'?
+Ans: in this case the __name__ is set to main.
+
+Important point:
+Relative imports work when running a file directly but break when the file is imported as part of a package. Absolute imports are the correct production style and require running with python -m or setting PYTHONPATH.
+Meaning when I import the validate as below:
+from validate import required_columns ==> this is a relative import and works in the python terminal bcoz the file is running inside the ingestion folder and finds the validate but this would give error if we import this validate in any other folder for ex. in Airflow folder. Thus always use the absolute path and that can be achieved by running python with -m or setting permanent path variable. For now lets move ahead with the -m. This -m tells python to start looking for the module from the root folder and run the current file as a module.
+Thus while using absolute imports run from the bash and while using relative import we can use the python terminal
