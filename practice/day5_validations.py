@@ -13,3 +13,7 @@ required = df.columns.to_list()
 print(required)
 req_col = ['amount', 'nameOrig', 'oldbalanceOrg', 'newbalanceOrig','isFraud', 'isFlaggedFraud']
 required_columns(df,req_col)
+
+print(f'__name__ is :{__name__}')
+if __name__ == '__main__':
+    print("Running directy")
