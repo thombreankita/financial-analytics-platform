@@ -1,4 +1,4 @@
-What is the difference between raising an error and handling an error?
+Q.What is the difference between raising an error and handling an error?
 Ans: Handling an error is basically when the we try to make the program execute without any failure even if the user inputs invalid data. Whereas raising intentionally and actively interrupting the flow of the program so that the error raised/ occured can be actively handled. Once an error is raised the execution stops and an error object is thrown up the stack so it can be handled there either by the user defined handling function or by the interpreter or runtime.
 An example is that in the missing column function we raisedthe error so that if any missing column is found the execution stops there itself, preventing user from procedding further without giving correct columns. But the error is not handled there as it is not specified what exactly to do if any such error arises. An example of handling would be in main() wrapping the call in a try/except — if required_columns raises a ValueError, main() catches it, logs the message, and exits gracefully instead of crashing."
 
@@ -11,8 +11,9 @@ Not as:
 bashcd d:/Financial-analytics-platform/ingestion
 python ingest.py
 
-When you run python -m ingestion.ingest from the project root — what do you think Python sets __name__ to inside ingest.py? Is it '__main__' or 'ingestion.ingest'?
+Q.When you run python -m ingestion.ingest from the project root — what do you think Python sets __name__ to inside ingest.py? Is it '__main__' or 'ingestion.ingest'?
 Ans: in this case the __name__ is set to main.
+==> __Main__ is the top level environment or can be said as the entry point of the program. When a script runs directly from the interpreter the __name__ is set to __main__ but when a script is imported inside another file, the __name__ of the imported script/module is set to the module name or to absolute module name/path.
 
 Important point:
 Relative imports work when running a file directly but break when the file is imported as part of a package. Absolute imports are the correct production style and require running with python -m or setting PYTHONPATH.
