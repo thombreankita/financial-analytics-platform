@@ -12,14 +12,24 @@ bashcd d:/Financial-analytics-platform/ingestion
 python ingest.py
 
 Q.When you run python -m ingestion.ingest from the project root — what do you think Python sets __name__ to inside ingest.py? Is it '__main__' or 'ingestion.ingest'?
-Ans: in this case the __name__ is set to main.
+Ans: in this case the __name__ is set to '__main__'.
 ==> __Main__ is the top level environment or can be said as the entry point of the program. When a script runs directly from the interpreter the __name__ is set to __main__ but when a script is imported inside another file, the __name__ of the imported script/module is set to the module name or to absolute module name/path.
 
 Important point:
 Relative imports work when running a file directly but break when the file is imported as part of a package. Absolute imports are the correct production style and require running with python -m or setting PYTHONPATH.
 Meaning when I import the validate as below:
 from validate import required_columns ==> this is a relative import and works in the python terminal bcoz the file is running inside the ingestion folder and finds the validate but this would give error if we import this validate in any other folder for ex. in Airflow folder. Thus always use the absolute path and that can be achieved by running python with -m or setting permanent path variable. For now lets move ahead with the -m. This -m tells python to start looking for the module from the root folder and run the current file as a module.
-Thus while using absolute imports run from the bash and while using relative import we can use the python terminal
+Thus while using absolute imports run from the bash and while using relative import we can use the python terminal.
+Absolute imports work correctly when running from the project root with python -m. Relative imports like from validate import x only work when running a file directly from inside its own folder — this breaks in production where files import each other across packages. Always use absolute imports in this project
 
 Why does requirements.txt pin exact versions with == rather than just listing package names?
 Answer: thats bcoz if some one take the project from github it will run properly. Since some functions and methods might not be supported by other versions of the libraries. For ex. If pandas releases version 3.0 with a breaking change to how read_csv handles certain dtypes, a project pinned to 2.2.0 will always behave consistently regardless of when or where it is installed. Without pinning, two engineers installing the same project on different days could get different pandas versions and different behaviour."
+
+Q1: What is the difference between a parameter and an argument in Python?
+Ans: Parameter is present in the function definition using type hints. Argument is passed when the funtion is called. A parameter is the variable name defined in the function signature. An argument is the actual value passed when the function is called. Example: in def load_raw_data(fp: Path), fp is the parameter. When you call load_raw_data(filepath), filepath is the argument.
+ 
+Q4: Why would you use pathlib.Path instead of a plain string for file paths?
+Ans: Path provides more functions and methods for file manipulation.pathlib.Path handles Windows and Mac path differences automatically — on Windows paths use backslashes, on Mac forward slashes. Path also provides useful attributes like .suffix, .stem, .parent, and methods like .exists() and .stat() that would require os.path and separate imports with plain strings.
+
+Q5: You call a function that returns None but you expected a DataFrame. What are the two most likely causes?
+Ans: 
