@@ -32,4 +32,8 @@ Q4: Why would you use pathlib.Path instead of a plain string for file paths?
 Ans: Path provides more functions and methods for file manipulation.pathlib.Path handles Windows and Mac path differences automatically — on Windows paths use backslashes, on Mac forward slashes. Path also provides useful attributes like .suffix, .stem, .parent, and methods like .exists() and .stat() that would require os.path and separate imports with plain strings.
 
 Q5: You call a function that returns None but you expected a DataFrame. What are the two most likely causes?
-Ans: 
+Ans: Consider this example: def write_partitioned_output(df: pd.DataFrame, opfile: str | Path) -> None:
+if this function is called as 
+result = write_partitioned_output(df, output_path)
+print(result)
+then the reult will store as None and print as None. If u are expecting a dataframe then give type hint datframe
