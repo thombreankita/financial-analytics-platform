@@ -36,4 +36,10 @@ Ans: Consider this example: def write_partitioned_output(df: pd.DataFrame, opfil
 if this function is called as 
 result = write_partitioned_output(df, output_path)
 print(result)
-then the reult will store as None and print as None. If u are expecting a dataframe then give type hint datframe
+then the reult will store as None and print as None. If u are expecting a dataframe then give type hint dataframe
+
+Even consider this function def check_number(value: float) -> str:
+    if value > 0:
+        return "positive"
+        
+print(check_number(-5)) --> here the output will be assigned as NULL implicitly
