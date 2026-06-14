@@ -43,3 +43,7 @@ Even consider this function def check_number(value: float) -> str:
         return "positive"
         
 print(check_number(-5)) --> here the output will be assigned as NULL implicitly
+
+
+## IMPORTANT POINTS ##
+- df_type.to_csv(o_file, index=False) overwrites by default. That makes your pipeline IDEMPOTENT — run it twice, same result.
