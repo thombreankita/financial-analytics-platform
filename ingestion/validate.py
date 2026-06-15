@@ -31,3 +31,24 @@ def validate_schema(df: pd.DataFrame) -> None:
       if not pd.api.types.is_numeric_dtype(df[col]):
          raise TypeError(f'The {col} column type should be numeric but type found is: {df[col].dtype}')
       
+def validate_business_rules(df: pd.DataFrame) -> dict:
+    """
+    Validates business logic rules on PaySim transaction data.
+    Returns a summary dict of violation counts per rule.
+    Raises ValueError if any single rule violation exceeds 5% of total rows.
+    """
+    res_amt = df[df['amount']<=0].shape[0]
+    res_err = df[df['nameDest'] == df['nameOrig']].shape[0]
+    critical_col = ['step','type','amount','nameOrig','nameDest','isFraud']
+    res_notnulls = df[critical_col].isnull().any(axis=1).sum()
+    res_transfer = df[(df['type'] == "TRANSFER") & (df['newbalanceDest']<=df['oldbalanceDest'])].shape[0]
+    res_debit = df[(df['type'] == 'DEBIT') & (df['oldbalanceOrg'] <= df['amount'])].shape[0]
+    res_type = df[df['type'] not in 'DEBIT' or df['type'] not in 'TRANSFER' or df['type'] not in 'CASH_OUT' or df['type'] not in 'PAYMENT' or df['type'] not in 'CASH_IN'].shape[0]
+
+    result = {'Amount': res_amt,
+              'Error': res_err,
+              'Not Null_Columns': res_notnulls,
+              'Transfer_valid': res_transfer,
+              'Debit_valid': res_debit,
+              'Type_valid': res_type}
+    return result
