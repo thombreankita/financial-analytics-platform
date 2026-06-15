@@ -37,13 +37,15 @@ def validate_business_rules(df: pd.DataFrame) -> dict:
     Returns a summary dict of violation counts per rule.
     Raises ValueError if any single rule violation exceeds 5% of total rows.
     """
+    total_rows = df.shape[0]
     res_amt = df[df['amount']<=0].shape[0]
     res_err = df[df['nameDest'] == df['nameOrig']].shape[0]
     critical_col = ['step','type','amount','nameOrig','nameDest','isFraud']
     res_notnulls = df[critical_col].isnull().any(axis=1).sum()
     res_transfer = df[(df['type'] == "TRANSFER") & (df['newbalanceDest']<=df['oldbalanceDest'])].shape[0]
     res_debit = df[(df['type'] == 'DEBIT') & (df['oldbalanceOrg'] <= df['amount'])].shape[0]
-    res_type = df[df['type'] not in 'DEBIT' or df['type'] not in 'TRANSFER' or df['type'] not in 'CASH_OUT' or df['type'] not in 'PAYMENT' or df['type'] not in 'CASH_IN'].shape[0]
+    valid_types = ['DEBIT','TRANSFER','CASH_OUT','PAYMENT','CASH_IN']
+    res_type = df[~df['type'].isin[valid_types]].shape[0]
 
     result = {'Amount': res_amt,
               'Error': res_err,
@@ -51,4 +53,9 @@ def validate_business_rules(df: pd.DataFrame) -> dict:
               'Transfer_valid': res_transfer,
               'Debit_valid': res_debit,
               'Type_valid': res_type}
+    
+    for r,count in result.items:
+       if count > 0.05 * total_rows:
+          raise ValueError(f'{r} violation exceeds 5% of total data!!')
+
     return result
