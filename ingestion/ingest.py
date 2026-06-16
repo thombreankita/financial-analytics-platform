@@ -1,6 +1,6 @@
 import pandas as pd
 from pathlib import Path
-from ingestion.validate import required_columns, check_file_ready, validate_schema
+from ingestion.validate import required_columns, check_file_ready, validate_schema, validate_demo
 
 def write_partitioned_output(df: pd.DataFrame, opfile: str | Path) -> None:
     """
@@ -41,6 +41,7 @@ def main():
     filepath = Path(__file__).parent.parent / "data" / "raw" / "PS_20174392719_1491204439457_log.csv"
     df = load_raw_data(filepath)
     print(f'Rows Loaded: {df.shape[0]}')
+    #validate_demo(df)
     write_partitioned_output(df,Path(__file__).parent.parent / "data" / "processed")
 
 if __name__ == '__main__':

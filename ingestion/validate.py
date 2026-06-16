@@ -30,7 +30,13 @@ def validate_schema(df: pd.DataFrame) -> None:
    for col in numeric_columns:
       if not pd.api.types.is_numeric_dtype(df[col]):
          raise TypeError(f'The {col} column type should be numeric but type found is: {df[col].dtype}')
-      
+
+def validate_demo(df: pd.DataFrame) -> None:
+   critical_col = ['step','type','amount','nameOrig','nameDest','isFraud']
+   res_validnulls = df[critical_col].isnull().any(axis=1).sum()  # this line gives the list of row numbers that have atleast one null in the specified column and then sums/counts the list len or items.
+   print(f'{res_validnulls}') 
+
+
 def validate_business_rules(df: pd.DataFrame) -> dict:
     """
     Validates business logic rules on PaySim transaction data.
