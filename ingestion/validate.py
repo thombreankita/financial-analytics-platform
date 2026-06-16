@@ -45,7 +45,7 @@ def validate_business_rules(df: pd.DataFrame) -> dict:
     res_transfer = df[(df['type'] == "TRANSFER") & (df['newbalanceDest']<=df['oldbalanceDest'])].shape[0]
     res_debit = df[(df['type'] == 'DEBIT') & (df['oldbalanceOrg'] <= df['amount'])].shape[0]
     valid_types = ['DEBIT','TRANSFER','CASH_OUT','PAYMENT','CASH_IN']
-    res_type = df[~df['type'].isin[valid_types]].shape[0]
+    res_type = df[~df['type'].isin(valid_types)].shape[0]
 
     result = {'Amount': res_amt,
               'Error': res_err,
@@ -54,7 +54,7 @@ def validate_business_rules(df: pd.DataFrame) -> dict:
               'Debit_valid': res_debit,
               'Type_valid': res_type}
     
-    for r,count in result.items:
+    for r,count in result.items():
        if count > 0.05 * total_rows:
           raise ValueError(f'{r} violation exceeds 5% of total data!!')
 
