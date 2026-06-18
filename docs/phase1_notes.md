@@ -34,3 +34,22 @@ validation checks for this dataset wolud be as follows:
 4. Source account != destination account
 5. if transaction type = debit and source old balance < amount flag it
 6. If type is not one of these ['PAYMENT' 'TRANSFER' 'CASH_OUT' 'DEBIT' 'CASH_IN'] flag it
+
+
+What is the difference between a parameter and an argument in Python?
+A parameter is the variable defined in the function declaration.
+Parameters are placeholders waiting for values.
+Example:
+def calculate_bonus(salary, percentage):
+    return salary * percentage / 100
+
+An argument is the actual value passed to the function when it is called.
+Example:
+calculate_bonus(50000, 10)
+Here:
+50000
+10
+are arguments.
+Arguments are the real values supplied to the parameters.
+
+What is the difference between required_columns and validate_schema? They both check columns — why do you need both?
