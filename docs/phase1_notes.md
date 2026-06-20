@@ -35,6 +35,12 @@ validation checks for this dataset wolud be as follows:
 5. if transaction type = debit and source old balance < amount flag it
 6. If type is not one of these ['PAYMENT' 'TRANSFER' 'CASH_OUT' 'DEBIT' 'CASH_IN'] flag it
 
+Results of these validation checks are as below:
+Business rule validation Summary: {'Amount': 16, 'Error': 0, 'Not Null_Columns': 0, 'Transfer_valid': 8105, 'Debit_valid': 11786, 'Type_valid': 0}
+The data has 16 records where transaction is <=0, which is very less compared to entire data set but this is a case of invalid data and can be deleted entirely.
+8,105 records where for transfer type the newbalanceDest  do not increase than oldbalanceDest. These might be case of frauds but not nessecarily always. That is because this is the issue with the PaySim dataset, where the merchant accounts (destinations starting with M) do not record balance changes. So newbalanceDest stays equal to oldbalanceDest even for legitimate transfers to merchant accounts. This is a data characteristic, not necessarily fraud.
+11,786  records for Debit type where the account had less than the amount specified. These cases can be legitimate sometime and fradulent most times.
+
 
 What is the difference between a parameter and an argument in Python?
 A parameter is the variable defined in the function declaration.
