@@ -1,6 +1,6 @@
 import pandas as pd
 from pathlib import Path
-from ingestion.validate import required_columns, check_file_ready, validate_schema, validate_demo
+from ingestion.validate import required_columns, check_file_ready, validate_schema, validate_business_rules
 
 def write_partitioned_output(df: pd.DataFrame, opfile: str | Path) -> None:
     """
@@ -31,6 +31,8 @@ def load_raw_data(fp: str | Path) -> pd.DataFrame: # Notice that if fp is only s
     col_req = ['step', 'type', 'amount', 'nameOrig', 'oldbalanceOrg', 'newbalanceOrig', 'nameDest', 'oldbalanceDest','newbalanceDest', 'isFraud', 'isFlaggedFraud']
     required_columns(df,col_req)
     validate_schema(df)
+    valid_criteria = validate_business_rules(df)
+    print(f'Business rule validation Summary: {valid_criteria}')
     return df
     
 def main():
