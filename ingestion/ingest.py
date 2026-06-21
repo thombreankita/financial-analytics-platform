@@ -52,19 +52,33 @@ def main():
     Loads raw PaySim data, validates it, and writes partitioned output by transaction type.
     """
     timer_s = t.time()
+    status = False
     print(f'Pipeline Started ....')
-    print(f'Loading Raw Data ....')
-    filepath = Path(__file__).parent.parent / "data" / "raw" / "PS_20174392719_1491204439457_log.csv"
-    dict_fin = load_raw_data(filepath)
-    print(f"Rows Loaded: {dict_fin['df'].shape[0]}")
-    print(f"File Validation: {dict_fin['file_check']}")
-    print(f"Schema Validation: {dict_fin['schema_check']}")
-    print(f"Business rule validation Summary: {dict_fin['business_rule']}")
-    print(f'Writing Partioned output........')
-    dict_fin2 = write_partitioned_output(dict_fin["df"],Path(__file__).parent.parent / "data" / "processed")
-    print(dict_fin2)
-    timer_e = t.time()
-    print(f'Pipeline Completed. Total Time {timer_e - timer_s:.1f} seconds')
+    try:
+        print(f'Loading Raw Data ....')
+        filepath = Path(__file__).parent.parent / "data" / "raw" / "PS_20174392719_1491204439457_log.csv"
+        dict_fin = load_raw_data(filepath)
+        print(f"Rows Loaded: {dict_fin['df'].shape[0]}")
+        print(f"File Validation: {dict_fin['file_check']}")
+        print(f"Schema Validation: {dict_fin['schema_check']}")
+        print(f"Business rule validation Summary: {dict_fin['business_rule']}")
+        print(f'Writing Partioned output........')
+        dict_fin2 = write_partitioned_output(dict_fin["df"],Path(__file__).parent.parent / "data" / "processed")
+        print(dict_fin2)
+        status = True
+    except FileNotFoundError as e:
+        print(f'Error — Raw file not found. Check data/raw/ folder exists and CSV is present.')
+    except ValueError as e:
+        print(f' Error — Pipeline Failed — Data validation error. Check your input file and column types.')
+        print(f'Details:{e}')
+    except TypeError as e:
+        print(f'Error — Invalid column type in dataset')
+        print(f'Details:{e}')
+    finally:
+        timer_e = t.time()
+        stat = "Completed" if status else "Failed"
+        print(f'Pipeline {stat}. Total Time {timer_e - timer_s:.1f} seconds')
+
 
 if __name__ == '__main__':
     main()

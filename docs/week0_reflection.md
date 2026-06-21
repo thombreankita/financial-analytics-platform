@@ -44,6 +44,15 @@ Even consider this function def check_number(value: float) -> str:
         
 print(check_number(-5)) --> here the output will be assigned as NULL implicitly
 
+## QUESTIONS ##
+Phase 1 Interview Questions — Prepare These Now
+You will answer these in writing on Day 20 but start thinking about them now:
+Q1: What is the difference between hard validation and soft validation? Give an example of each from your pipeline.
+Q2: Your ingestion script takes 73 seconds on 6.3M rows. An interviewer asks how you would make it faster. What are three specific things you would try?
+Q3: What does idempotent mean and how did you verify your pipeline is idempotent?
+Q4: Walk me through what happens when load_raw_data is called with a path to a file that does not exist. Trace the exact execution path.
+Q5: Why did you separate validate_schema and validate_business_rules into two functions instead of one?
+
 
 ## IMPORTANT POINTS ##
 - df_type.to_csv(o_file, index=False) overwrites by default. That makes your pipeline IDEMPOTENT — run it twice, same result.
