@@ -1,6 +1,8 @@
 import pandas as pd
 from pathlib import Path
 
+VIOLATION_THRESHOLD = 0.05  
+
 def required_columns(df: pd.DataFrame, required: list) -> None:
     """
     Check if all the required columns needed for the analysis are present in the dataframe
@@ -61,7 +63,7 @@ def validate_business_rules(df: pd.DataFrame) -> dict:
               'Type_valid': res_type}
     
     for r,count in result.items():
-       if count > 0.05 * total_rows:
+       if count > VIOLATION_THRESHOLD  * total_rows:
           raise ValueError(f'{r} violation exceeds 5% of total data!!')
 
     return result
