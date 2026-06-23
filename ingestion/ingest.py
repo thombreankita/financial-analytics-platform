@@ -21,9 +21,12 @@ def write_partitioned_output(df: pd.DataFrame, opfile: str | Path) -> dict:
     #print(f'Total rows written accross all file: {df.shape[0]}')
     return result
 
+"""
+Notice below in loadrawdata function, we have given a default parameter nrows by assigning it as None that means that it will work even if the user do not pass that paramter while calling the function.
+This is the concept of PARAMETERISED EXECUTION where in for testing a case, instead of running the case on entire dataset it will be executed on for a part of dataset. Very helpful for testing purpose.
+"""
 
-
-def load_raw_data(fp: str | Path) -> dict: # Notice that if fp is only string type and filepath inside main is a Path obj. still no error!! This is bcoz  pd.read_csv() internally accepts both str and Path objects — it handles both types itself.
+def load_raw_data(fp: str | Path, nrows: int = None) -> dict: # Notice that if fp is only string type and filepath inside main is a Path obj. still no error!! This is bcoz  pd.read_csv() internally accepts both str and Path objects — it handles both types itself.
     """
     Load raw PaySim CSV with full validation.
     Checks file readiness, required columns, and data types before returning.
@@ -32,7 +35,7 @@ def load_raw_data(fp: str | Path) -> dict: # Notice that if fp is only string ty
     fp = Path(fp) # Convert to Path object — ensures .exists(), .suffix(), .stat() work correctly regardless of whether caller passed a str or Path
     check_file_ready(fp)
     f_valid = 'Passed'
-    df  = pd.read_csv(fp)
+    df  = pd.read_csv(fp,nrows=nrows)
     col_req = ['step', 'type', 'amount', 'nameOrig', 'oldbalanceOrg', 'newbalanceOrig', 'nameDest', 'oldbalanceDest','newbalanceDest', 'isFraud', 'isFlaggedFraud']
     required_columns(df,col_req)
     validate_schema(df)
@@ -69,7 +72,7 @@ def main():
     except FileNotFoundError as e:
         print(f'Error — Raw file not found. Check data/raw/ folder exists and CSV is present.')
     except ValueError as e:
-        print(f' Error — Pipeline Failed — Data validation error. Check your input file and column types.')
+        print(f' Error — Data validation error. Check your input file and column types.')
         print(f'Details:{e}')
     except TypeError as e:
         print(f'Error — Invalid column type in dataset')
