@@ -44,6 +44,14 @@ Even consider this function def check_number(value: float) -> str:
         
 print(check_number(-5)) --> here the output will be assigned as NULL implicitly
 
+What does nrows=None as a default parameter mean? What is this pattern called in Python?
+nrows=None in the function defn as a argument specifies that it is ok if no parameter is passed to the function for this attribute
+
+Q2: Why is VIOLATION_THRESHOLD = 0.05 at the top of the file better than 0.05 hardcoded inside the function?
+because the constant once declare won't change through out the program niether can it be updated '
+
+Q3. Finally block should not print completed always I can add a variable of flag that checks if no error is raised and only in that case it will print completed
+
 ## QUESTIONS ##
 Phase 1 Interview Questions — Prepare These Now
 You will answer these in writing on Day 20 but start thinking about them now:
@@ -56,3 +64,4 @@ Q5: Why did you separate validate_schema and validate_business_rules into two fu
 
 ## IMPORTANT POINTS ##
 - df_type.to_csv(o_file, index=False) overwrites by default. That makes your pipeline IDEMPOTENT — run it twice, same result.
+- PARAMETERISED EXECUTION where in for testing a case, instead of running the case on entire dataset it will be executed on for a part of dataset. Very helpful for testing purpose.
