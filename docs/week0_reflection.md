@@ -52,6 +52,27 @@ because the constant once declare won't change through out the program niether c
 
 Q3. Finally block should not print completed always I can add a variable of flag that checks if no error is raised and only in that case it will print completed
 
+1. What is pytest?
+Python testing framework used to automate code validation.
+Helps detect regressions when code changes.
+Widely used in production Python applications and data pipelines.
+Tests become executable documentation of expected behavior.
+2. Why do Data Engineers use pytest?
+
+Typical DE code contains:
+
+data validation functions
+transformations
+business rules
+schema checks
+utility functions
+
+Testing ensures:
+
+new code does not break existing functionality
+pipeline changes are safe
+data quality rules remain enforced
+
 ## QUESTIONS ##
 Phase 1 Interview Questions — Prepare These Now
 You will answer these in writing on Day 20 but start thinking about them now:
