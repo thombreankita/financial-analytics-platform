@@ -73,6 +73,17 @@ new code does not break existing functionality
 pipeline changes are safe
 data quality rules remain enforced
 
+
+Q1: What is the naming convention for pytest test files and test functions? Why does pytest need this convention to find your tests?
+--> test_*.py or *_test.py
+Q2: What does pytest.raises do? When would you use it?
+-->  it asserts that a specific exception is raised by the code you are testing. It is used to verify that your functions fail correctly when given bad input.
+Usage pattern:
+pythondef test_missing_column_raises_error(valid_df):
+    with pytest.raises(ValueError):
+        required_columns(valid_df, ['amount', 'fake_column'])
+If required_columns raises ValueError — test passes. If it does not raise — test fails. This is how you confirm your error handling works correctly.
+
 ## QUESTIONS ##
 Phase 1 Interview Questions — Prepare These Now
 You will answer these in writing on Day 20 but start thinking about them now:
