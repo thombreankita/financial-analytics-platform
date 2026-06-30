@@ -9,7 +9,7 @@ from ingestion.validate import(
 )
 
 @pytest.fixture
-def valid_df() -> pd.Dataframe:
+def valid_df() -> pd.DataFrame:
     df = pd.read_csv('Path(__file__).parent.parent / "data" / "raw" / "PS_20174392719_1491204439457_log.csv"', nrows = 10000)
     return df
 pass
@@ -20,3 +20,7 @@ def required_columns_passed_with_validdf(valid_df: pd.DataFrame):
     pass
 
 
+
+def test_check_file_ready_raises_on_non_csv():
+    # pass a path with .txt extension that exists
+   pass
