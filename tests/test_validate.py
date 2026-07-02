@@ -9,12 +9,12 @@ from ingestion.validate import(
 )
 
 @pytest.fixture
-def valid_df() -> pd.DataFrame:
-    df = pd.read_csv('Path(__file__).parent.parent / "data" / "raw" / "PS_20174392719_1491204439457_log.csv"', nrows = 10000)
+def test_valid_df() -> pd.DataFrame:
+    df = pd.read_csv(r'D:\Financial-analytics-platform\data\raw\PS_20174392719_1491204439457_log.csv', nrows = 10000)
     return df
 pass
 
-def required_columns_passed_with_validdf(valid_df: pd.DataFrame):
+def test_required_columns_passed_with_validdf(valid_df: pd.DataFrame):
     col_req = ['step', 'type', 'amount', 'nameOrig', 'oldbalanceOrg', 'newbalanceOrig', 'nameDest', 'oldbalanceDest','newbalanceDest', 'isFraud', 'isFlaggedFraud']
     required_columns(valid_df,col_req)
     pass
