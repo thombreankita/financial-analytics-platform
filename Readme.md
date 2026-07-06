@@ -266,8 +266,6 @@ financial-analytics-platform/
 
 ## What I Would Do Differently in Production
 
-This section is intentional — it shows the difference between building for learning and building for production.
-
 **Alerting** — Failed pipeline tasks would send alerts via PagerDuty or Slack webhook. Right now failures print to terminal. In production, nobody watches terminals at 3am.
 
 **Incremental loading** — Currently the pipeline re-processes all 6.3M rows on every run. In production with daily transaction feeds, only new records would be processed using Airflow's `execution_date` and dbt incremental materialisation.
