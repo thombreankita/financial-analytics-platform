@@ -24,3 +24,13 @@ Ans: Narrow transformation run on individual partitions, are faster as no shuffl
 Narrow: filter(), select(), map() — each partition processes independently
 Wide: groupBy(), join(), orderBy() — data must move between partitions, called a shuffle
 shuffles are expensive because data travels across the network between executor nodes. Minimising wide transformations is one of the primary PySpark optimisation strategies.
+
+## SparkSession.builder.master("local[*]").getOrCreate().stop():
+Here [*] means use all available CPU cores on your machine — whatever number that is. If your machine has 8 cores, local[*] gives Spark all 8. If it has 4, it gets 4.
+It is not adaptive. It is simply "use everything available right now."
+The difference matters because:
+
+local[1] — tasks run one at a time, sequentially
+local[*] — tasks run in parallel across all cores, faster for large data
+
+In production Spark does not run locally at all — it runs on a cluster where the master URL is something like spark://host:7077. local[*] is a development convenience that simulates a cluster on your own machine.
