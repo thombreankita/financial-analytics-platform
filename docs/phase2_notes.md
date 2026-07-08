@@ -11,6 +11,8 @@ df.count() ==> action
 df.write.parquet(...) ==> action
 df.select(...) ==> transformation
 
+## If Spark has to return a final result to you, it's probably an Action. ##
+
 Q3 — What is a DAG in the Spark context?
 Ans: Directed Acyclic Graphs in Spark are related to the lazy evaluation. Spark remembers the operations to be performed, creates an optimised execution plan and then execute. This optimised execution plan uses DAG. Spark's DAG is optimised by the Catalyst Optimizer before execution. It can reorder operations, push filters down to run earlier, and combine steps. This is why Spark can sometimes be faster than hand-written optimised SQL — the optimizer does work you did not ask for.
 
