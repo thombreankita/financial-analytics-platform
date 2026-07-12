@@ -36,3 +36,14 @@ local[1] — tasks run one at a time, sequentially
 local[*] — tasks run in parallel across all cores, faster for large data
 
 In production Spark does not run locally at all — it runs on a cluster where the master URL is something like spark://host:7077. local[*] is a development convenience that simulates a cluster on your own machine.
+
+Partitions:
+Partition = Piece of data
+
+↓
+
+Spark creates one Task for that partition
+
+↓
+
+A Worker executes that Task
