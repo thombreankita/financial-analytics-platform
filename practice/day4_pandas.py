@@ -16,7 +16,6 @@ def load_and_inspect(filepath: str) -> pd.DataFrame:
 def get_positive_transactions(df: pd.DataFrame) -> pd.DataFrame:
 
     if "amount" not in df.columns:
-
         raise ValueError("amount column missing")
     print(df[df["amount"] > 0])
     print("Positive transactions:",len(df[df["amount"]>0]))
