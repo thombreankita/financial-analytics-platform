@@ -51,6 +51,9 @@ A Worker executes that Task
 # All actions are initiated and coordinated by the Driver. Some actions return results to the Driver (like show(), count(), collect()), while others perform work externally (like write()) and only return the status of the operation.
 
 inferSchema:
+Spark reads data to determine the types before building the final DataFrame schema. it has to inspect data before deciding on the schema. Thus in case of huge filespark inspects first with infer schema and hten for operations/ action. Result increased I/O
+
 The real problem with inferSchema is:
 Spark reads a sample of the data to guess types. If the first 100 rows of amount are all whole numbers, Spark might infer integer instead of double. Row 50,000 has 9839.64 — now your pipeline fails or silently truncates decimals.
 In production you define the schema explicitly using StructType so the types are guaranteed regardless of what the data looks like. 
+Thus schema inference requires Spark to inspect the data before processing it, which adds overhead. More importantly, inferred types can change as the input data changes, leading to inconsistent pipelines. In production, I prefer defining an explicit schema so the pipeline is faster, deterministic, and aligned with business expectations
