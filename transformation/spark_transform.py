@@ -16,6 +16,8 @@ def load_data_spark(spark: SparkSession, filepath: str) -> DataFrame:
     StructField("oldbalanceOrg", DoubleType(), True),
     StructField("newbalanceOrig", DoubleType(), True),
     StructField("nameDest", StringType(), True),
+    StructField("oldbalanceDest", DoubleType(), True),
+    StructField("newbalanceDest", DoubleType(), True),
     StructField("isFraud", IntegerType(), True),
     StructField("isFlaggedFraud", IntegerType(), True),
     ])
