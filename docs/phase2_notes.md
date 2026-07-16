@@ -56,4 +56,38 @@ Spark reads data to determine the types before building the final DataFrame sche
 The real problem with inferSchema is:
 Spark reads a sample of the data to guess types. If the first 100 rows of amount are all whole numbers, Spark might infer integer instead of double. Row 50,000 has 9839.64 — now your pipeline fails or silently truncates decimals.
 In production you define the schema explicitly using StructType so the types are guaranteed regardless of what the data looks like. 
-Thus schema inference requires Spark to inspect the data before processing it, which adds overhead. More importantly, inferred types can change as the input data changes, leading to inconsistent pipelines. In production, I prefer defining an explicit schema so the pipeline is faster, deterministic, and aligned with business expectations
+Thus schema inference requires Spark to inspect the data before processing it, which adds overhead. More importantly, inferred types can change as the input data changes, leading to inconsistent pipelines. In production, I prefer defining an explicit schema so the pipeline is faster, deterministic, and aligned with business expectations.
+
+orderBy():
+orderBy is a wide transformation because it requires a shuffle. All data must be sorted globally across partitions, not just within each partition. This is one of the most expensive operations in Spark. In production you only sort when absolutely necessary.
+
+Output of volume aggregation is like 8.550078961000006E7. Spark is displaying large doubles in scientific notation. This is fine for pipeline processing but will need formatting in Power BI
+
+Q1: Your aggregation produced 2,729 rows from 6.3M. Where did the other rows go — what happened to them conceptually?
+-->  Conceptually, the 6.3M rows are grouped together based on their similarity viz. step and type in our case - aggregation collapses rows into groups. The 6.3M individual transaction rows are reduced to 2,729 group summaries. The original rows are not deleted — they are summarised. The original DataFrame df still exists in memory unchanged. Only volume_df has 2,729 rows.
+
+Q2: groupBy is a wide transformation. What happened under the hood when Spark executed it — what is a shuffle and why did it happen here specifically?
+--> In a wide transformation, we cannot rely on one executor to run and compute individually because same data can be present at the othe partitions or executors, thus they need to exchange the information. This transfer of data or exchange between the executors is called shuffle and it happened bcoz we used groupBy().
+Each executor writes its partial results to disk — this is the shuffle write
+Other executors read from those disk locations to collect all rows belonging to the same group — this is the shuffle read
+The driver does not get involved in moving data — executors talk to each other
+The driver only receives the final result when an action like show() or count() is called.
+
+Q3: Look at step 1, TRANSFER row:
+276 transactions | 1.24E8 total | 450,352 average
+The average TRANSFER amount is ₹450,352. The average PAYMENT is ₹6,090. What does this tell you about the fraud risk profile of TRANSFER transactions compared to PAYMENT? 
+--> TRANSFER transactions have 74x higher average amount than PAYMENT transactions. This cross-referenced that with Phase 1 validation I found 8,105 TRANSFER balance anomalies — where newbalanceDest did not increase after a transfer. High-value transactions with missing destination balance updates are the strongest fraud signal in this dataset, thus we will use this as our fraud risk flagging logic.
+
+## PARK##
+                     Spark
+                        │
+        ┌───────────────┴────────────────┐
+        │                                │
+  Architecture                     DataFrame API
+        │                                │
+ Driver, Executor                  read()
+ Partitions                        select()
+ Tasks                             filter()
+ DAG                               withColumn()
+ Lazy Evaluation                   groupBy()
+ Catalyst                          join()
