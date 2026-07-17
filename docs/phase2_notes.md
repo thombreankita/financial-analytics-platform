@@ -78,7 +78,7 @@ Q3: Look at step 1, TRANSFER row:
 The average TRANSFER amount is ₹450,352. The average PAYMENT is ₹6,090. What does this tell you about the fraud risk profile of TRANSFER transactions compared to PAYMENT? 
 --> TRANSFER transactions have 74x higher average amount than PAYMENT transactions. This cross-referenced that with Phase 1 validation I found 8,105 TRANSFER balance anomalies — where newbalanceDest did not increase after a transfer. High-value transactions with missing destination balance updates are the strongest fraud signal in this dataset, thus we will use this as our fraud risk flagging logic.
 
-## PARK##
+## SPARK##
                      Spark
                         │
         ┌───────────────┴────────────────┐
