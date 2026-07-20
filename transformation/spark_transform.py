@@ -36,6 +36,13 @@ def calculate_daily_transaction_volume(df: DataFrame) -> DataFrame:
         F.avg('amount').alias('avg_amount')
     ).orderBy('step')
     return df_r
+    
+def flag_high_risk_transactions(df: DataFrame) -> DataFrame:
+    """
+    Adds a risk_level column — HIGH or LOW.
+    HIGH if amount > 3x type average OR isFraud == 1.
+    Uses a broadcast join on type averages.
+    """
 
 def main():
     fpath = str(Path(__file__).parent.parent / "data" /"raw"/"PS_20174392719_1491204439457_log.csv")
