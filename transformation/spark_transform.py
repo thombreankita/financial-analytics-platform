@@ -43,6 +43,16 @@ def flag_high_risk_transactions(df: DataFrame) -> DataFrame:
     HIGH if amount > 3x type average OR isFraud == 1.
     Uses a broadcast join on type averages.
     """
+    df_grp = df.groupBy('type').agg(F.avg('amount').alias('avg_amount'))
+    F.broadcast(df_grp)
+    df.join(df_grp, on = 'avg_amount')
+    df_new = df.withColumn('risk',F.when(df['amount']>3*df['avg_amount'], 'High')
+                                    .when(df['isFraud'] = 1, 'High')
+                                    .otherwise('Low'))
+
+
+    return df
+
 
 def main():
     fpath = str(Path(__file__).parent.parent / "data" /"raw"/"PS_20174392719_1491204439457_log.csv")
