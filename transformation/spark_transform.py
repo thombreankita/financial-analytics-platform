@@ -44,14 +44,12 @@ def flag_high_risk_transactions(df: DataFrame) -> DataFrame:
     Uses a broadcast join on type averages.
     """
     df_grp = df.groupBy('type').agg(F.avg('amount').alias('avg_amount'))
-    F.broadcast(df_grp)
-    df.join(df_grp, on = 'avg_amount')
-    df_new = df.withColumn('risk',F.when(df['amount']>3*df['avg_amount'], 'High')
-                                    .when(df['isFraud'] = 1, 'High')
+    #F.broadcast(df_grp)
+    df_join = df.join(F.broadcast(df_grp), on = 'type')
+    df_new = df_join.withColumn('risk',F.when(df_join['amount']>3*df_join['avg_amount'], 'High').when(df_join['isFraud'] == 1,'High')
                                     .otherwise('Low'))
-
-
-    return df
+    df_new=df_new.drop('avg_amount')
+    return df_new
 
 
 def main():
@@ -61,6 +59,10 @@ def main():
     volumndf = calculate_daily_transaction_volume(df)
     volumndf.show(20)
     print(f'Volumn aggregation: {volumndf.count()}')
+    risk_df = flag_high_risk_transactions(df)
+    risk_df.show(10)
+    print(f'High risk transactions: {risk_df.filter(risk_df["risk"] == "High").count()}')
+    print(f'Total transactions: {risk_df.count()}')
     sp_sess.stop()
 
  
