@@ -46,9 +46,13 @@ def flag_high_risk_transactions(df: DataFrame) -> DataFrame:
     df_grp = df.groupBy('type').agg(F.avg('amount').alias('avg_amount'))
     #F.broadcast(df_grp)
     df_join = df.join(F.broadcast(df_grp), on = 'type')
-    df_new = df_join.withColumn('risk',F.when(df_join['amount']>3*df_join['avg_amount'], 'High').when(df_join['isFraud'] == 1,'High')
-                                    .otherwise('Low'))
-    df_new=df_new.drop('avg_amount')
+    df_new = df_join.withColumn('risk',F.when(df_join['amount']>3*df_join['avg_amount'], 'HIGH').when(df_join['isFraud'] == 1,'HIGH')
+                                    .otherwise('LOW'))
+    cols = ['step', 'type', 'amount', 'nameOrig', 'oldbalanceOrg', 
+        'newbalanceOrig', 'nameDest', 'oldbalanceDest', 
+        'newbalanceDest', 'isFraud', 'risk', 'isFlaggedFraud']
+    df_new = df_new.select(cols)
+    #df_new=df_new.drop('avg_amount')
     return df_new
 
 
@@ -61,7 +65,7 @@ def main():
     print(f'Volumn aggregation: {volumndf.count()}')
     risk_df = flag_high_risk_transactions(df)
     risk_df.show(10)
-    print(f'High risk transactions: {risk_df.filter(risk_df["risk"] == "High").count()}')
+    print(f'High risk transactions: {risk_df.filter(risk_df["risk"] == "HIGH").count()}')
     print(f'Total transactions: {risk_df.count()}')
     sp_sess.stop()
 
