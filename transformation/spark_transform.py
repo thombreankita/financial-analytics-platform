@@ -55,6 +55,15 @@ def flag_high_risk_transactions(df: DataFrame) -> DataFrame:
     #df_new=df_new.drop('avg_amount')
     return df_new
 
+def calculate_fraudrate_by_type (df: DataFrame) -> DataFrame:
+    """
+    Calculates the fraud rates by transaction types
+    """
+    df_g = df.groupBy('type').agg(F.sum('isFraud').alias('fraud_transactions'),
+                                  F.count('*').alias('total_transactions'),
+                                  F.round((F.sum('isFraud')/F.count('*')*100),2).alias('fraud_rate'))
+    df_g = df_g.orderBy('fraud_rate', ascending = False)
+    return df_g
 
 def main():
     fpath = str(Path(__file__).parent.parent / "data" /"raw"/"PS_20174392719_1491204439457_log.csv")
@@ -67,6 +76,8 @@ def main():
     risk_df.show(10)
     print(f'High risk transactions: {risk_df.filter(risk_df["risk"] == "HIGH").count()}')
     print(f'Total transactions: {risk_df.count()}')
+    fraud_rate = calculate_fraudrate_by_type(risk_df)
+    fraud_rate.show(20)
     sp_sess.stop()
 
  
