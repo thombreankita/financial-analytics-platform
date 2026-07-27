@@ -91,3 +91,24 @@ The average TRANSFER amount is ₹450,352. The average PAYMENT is ₹6,090. What
  DAG                               withColumn()
  Lazy Evaluation                   groupBy()
  Catalyst                          join()
+
+
+ If Spark has reliable statistics and the estimated size of one side is below the configured threshold (by default around 10 MB, though this is configurable), it can automatically choose a broadcast join.
+ So yes, Spark can automatically broadcast.
+Q."Why do we use broadcast() if Spark can automatically broadcast?"
+Ans: Spark can automatically choose a broadcast join when it has accurate statistics and the table is below the auto-broadcast threshold. The broadcast() function is a hint to the optimizer, allowing the developer to influence the execution plan when they know broadcasting is appropriate or when automatic detection may not choose it.
+
+ 193,505 is 3% of 6.3M rows. Think about it from the other direction — if you flag 3% of all transactions as HIGH risk, a fraud analyst has to investigate 190,000 cases. That is too many to be actionable. The real confirmed fraud is 8,213 rows — 0.13%. Your threshold of 3x average is catching a lot of high-value legitimate transactions alongside actual fraud. This is the classic precision vs recall tradeoff in fraud detection.
+
+ TRANSFER transactions have the highest fraud rate at 0.77% (4,097 fraud out of 532,909 total). CASH_OUT is second at 0.18%. CASH_IN, PAYMENT, and DEBIT have zero confirmed fraud in PaySim. This validates the Phase 1 business rule targeting TRANSFER balance anomalies as the primary fraud detection signal.
+
+Functionalities of all the functions:
+calculate_daily_transaction_volume — groups 6.3M rows into 744 steps × ~5 types = 2,729 summary rows. Rows collapsed.
+flag_high_risk_transactions — adds a column to every existing row. Row count unchanged at 6,362,620.
+calculate_fraudrate_by_type — groups by type only = 5 rows. One row per transaction type.
+
+### The pattern: aggregations reduce rows, withColumn preserves rows. Write that distinction clearly in your notes — it is a fundamental PySpark concept. ###
+
+Spark partitions are logical chunks of data used during execution for parallel processing.
+Partitioned Parquet files are a storage layout where data is organized into directories (such as year=2025/month=07) so Spark can skip entire folders using partition pruning. partition pruning is powerful—it avoids unnecessary disk I/O before any data is read.
+"Parquet is a columnar storage format that enables column pruning and predicate pushdown. When the data is also stored using directory partitioning, Spark can apply partition pruning to skip entire folders. Together, these optimizations drastically reduce disk I/O, making Parquet much faster than CSV for analytical workloads."
