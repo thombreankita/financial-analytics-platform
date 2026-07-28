@@ -107,8 +107,92 @@ calculate_daily_transaction_volume — groups 6.3M rows into 744 steps × ~5 typ
 flag_high_risk_transactions — adds a column to every existing row. Row count unchanged at 6,362,620.
 calculate_fraudrate_by_type — groups by type only = 5 rows. One row per transaction type.
 
-### The pattern: aggregations reduce rows, withColumn preserves rows. Write that distinction clearly in your notes — it is a fundamental PySpark concept. ###
+### The pattern: aggregations reduce rows, withColumn preserves rows.
 
 Spark partitions are logical chunks of data used during execution for parallel processing.
 Partitioned Parquet files are a storage layout where data is organized into directories (such as year=2025/month=07) so Spark can skip entire folders using partition pruning. partition pruning is powerful—it avoids unnecessary disk I/O before any data is read.
 "Parquet is a columnar storage format that enables column pruning and predicate pushdown. When the data is also stored using directory partitioning, Spark can apply partition pruning to skip entire folders. Together, these optimizations drastically reduce disk I/O, making Parquet much faster than CSV for analytical workloads."
+When would you use partitionBy()? --> choose partition columns based on expected query patterns and cardinality. The goal is to maximize partition pruning while avoiding excessive small files.
+
+No partitionBy ==> One Spark partition → One output file
+With partitionBy("type") ==> Spark creates folders:
+
+output/
+├── type=PAYMENT/
+├── type=CASH_OUT/
+├── type=TRANSFER/
+...
+
+Inside each folder there may be:
+
+part-0000.parquet
+part-0001.parquet
+
+The number of files is not simply the number of transaction types.
+
+It depends on:
+
+Spark partitions
+How the data is distributed
+How tasks write their output
+
+Why are too many small Parquet files bad?
+1. Filesystem Metadata Overhead
+Every file has its own metadata (file name, size, permissions, timestamps, etc.).
+The operating system or distributed filesystem must manage metadata for every single file.
+Millions of small files consume significantly more metadata resources than a few large files.
+
+Example:
+
+❌ 20,000 files × 100 KB each
+✅ 20 files × 100 MB each
+
+Both store the same amount of data, but the second option is much more efficient.
+
+2. File Open/Close Overhead (Disk I/O)
+
+Before Spark can read a file, it must:
+
+Locate the file.
+Read its metadata.
+Open the file.
+Read the data.
+Close the file.
+
+With thousands of tiny files, Spark spends a large amount of time opening and closing files instead of processing data.
+
+Result: Increased I/O overhead and slower jobs.
+
+3. Task Scheduling Overhead
+
+Spark generally creates one read task per input partition/file.
+
+If there are:
+
+20 files → ~20 tasks ✅
+20,000 files → ~20,000 tasks ❌
+
+The driver now has to:
+
+Schedule thousands of tasks.
+Track task execution.
+Manage task completion.
+
+The scheduling overhead itself becomes expensive.
+
+==> Creating too many small Parquet files hurts Spark performance because it increases filesystem metadata overhead, file open/close I/O overhead, and task scheduling overhead. Instead of spending time processing data, Spark spends a significant amount of time managing files.
+
+repartition(n) changes the number of Spark execution partitions, and during a write, each partition is typically written as a separate output file.
+repartition(500) performs a shuffle to create exactly 500 Spark execution partitions. When the DataFrame is written, each partition is typically written as one Parquet file, resulting in about 500 output files. Although repartitioning adds an expensive shuffle, it helps avoid the small files problem and creates a more efficient dataset for future reads by reducing file management and task scheduling overhead."
+
+Does repartition(500) always produce exactly 500 Parquet files?"
+"It generally produces about 500 output files when writing normally. However, if partitionBy() is used, the final number of files depends on how the execution partitions are distributed across the storage partitions. A single execution partition can write files into multiple partition directories, so the output file count is not guaranteed to be exactly 500."
+
+Method Chaining in Spark is called Fluent Interface
+Ex. df.filter().select().groupBy()
+Ex. df.write.mode().partitionBy().parquet()
+
+
+Spark uses immutable DataFrames and writers because every transformation returns a new logical plan instead of modifying the existing object. This makes lazy evaluation, optimization, and reuse of the original DataFrame possible.
+
+A good partition column has low to moderate cardinality and is frequently used in filters. risk has only two values (HIGH, LOW), so Spark creates only two partition directories, making partition pruning highly effective. nameOrig has millions of unique values, which would create millions of directories and tiny files, causing the small files problem with very little pruning benefit because queries rarely filter on a single account ID.
