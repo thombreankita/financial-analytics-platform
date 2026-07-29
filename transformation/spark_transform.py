@@ -65,6 +65,15 @@ def calculate_fraudrate_by_type (df: DataFrame) -> DataFrame:
     df_g = df_g.orderBy('fraud_rate', ascending = False)
     return df_g
 
+def write_parquet(df: DataFrame, output_path: str, partition_by: str = None) -> None:
+    """ 
+    Writing the result of the transformaions to disk in Parquet format
+    """
+    writer = df.write.mode('overwrite')
+    if partition_by:
+        writer = writer.partitionBy(partition_by)
+    writer.parquet(output_path)
+
 def main():
     fpath = str(Path(__file__).parent.parent / "data" /"raw"/"PS_20174392719_1491204439457_log.csv")
     sp_sess = create_s_session("FinancialAnalytics")
@@ -72,12 +81,15 @@ def main():
     volumndf = calculate_daily_transaction_volume(df)
     volumndf.show(20)
     print(f'Volumn aggregation: {volumndf.count()}')
+    write_parquet(volumndf,str(Path(__file__).parent.parent / "data" / "processed" / "volume"))
     risk_df = flag_high_risk_transactions(df)
     risk_df.show(10)
     print(f'High risk transactions: {risk_df.filter(risk_df["risk"] == "HIGH").count()}')
     print(f'Total transactions: {risk_df.count()}')
+    write_parquet(risk_df,str(Path(__file__).parent.parent / "data" / "processed" / "risk"),'risk')
     fraud_rate = calculate_fraudrate_by_type(risk_df)
     fraud_rate.show(20)
+    write_parquet(fraud_rate,str(Path(__file__).parent.parent / "data" / "processed" / "fraud_rate"))
     sp_sess.stop()
 
  
