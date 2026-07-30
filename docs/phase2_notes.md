@@ -196,3 +196,13 @@ Ex. df.write.mode().partitionBy().parquet()
 Spark uses immutable DataFrames and writers because every transformation returns a new logical plan instead of modifying the existing object. This makes lazy evaluation, optimization, and reuse of the original DataFrame possible.
 
 A good partition column has low to moderate cardinality and is frequently used in filters. risk has only two values (HIGH, LOW), so Spark creates only two partition directories, making partition pruning highly effective. nameOrig has millions of unique values, which would create millions of directories and tiny files, causing the small files problem with very little pruning benefit because queries rarely filter on a single account ID.
+
+inferSchema
+
+Spark reads the data to determine the data types before building the final DataFrame schema.
+
+It has to inspect the data before deciding on the schema.
+
+Thus, in the case of huge files, Spark first inspects the data using inferSchema and then performs operations/actions.
+
+Result: Increased I/O.
