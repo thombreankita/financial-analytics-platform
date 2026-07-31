@@ -18,7 +18,7 @@ Ans: Directed Acyclic Graphs in Spark are related to the lazy evaluation. Spark 
 
 Q4 — Why does lazy evaluation improve performance?
 Ans: 
-- Lazy evaluation improves performance because Spark dosen't need to the transformation applied dataset/dataframe at every step. It simply stores all the operations and performs when its time to explicitly show the data. Thus no need to store and carry heavily transformed dataframe at everystep thus reducing the loading time for each subsequent transformation i.e. no need to store intermediate DataFrames at every step. 
+- Lazy evaluation improves performance because Spark dosen't need to do the transformation applied dataset/dataframe at every step. It simply stores all the operations and performs when its time to explicitly show the data. Thus no need to store and carry heavily transformed dataframe at everystep thus reducing the loading time for each subsequent transformation i.e. no need to store intermediate DataFrames at every step. 
 - Predicate pushdown. Because Spark has the full plan before executing, it can push a filter operation all the way down to the data source — reading only the rows it needs from disk rather than reading everything and then filtering. Without lazy evaluation this is impossible because Spark would have already read all the data before it knew about the filter.
 
 Q5 — What is the difference between a narrow transformation and a wide transformation?
@@ -197,12 +197,11 @@ Spark uses immutable DataFrames and writers because every transformation returns
 
 A good partition column has low to moderate cardinality and is frequently used in filters. risk has only two values (HIGH, LOW), so Spark creates only two partition directories, making partition pruning highly effective. nameOrig has millions of unique values, which would create millions of directories and tiny files, causing the small files problem with very little pruning benefit because queries rarely filter on a single account ID.
 
-inferSchema
-
+inferSchema:
 Spark reads the data to determine the data types before building the final DataFrame schema.
-
 It has to inspect the data before deciding on the schema.
-
 Thus, in the case of huge files, Spark first inspects the data using inferSchema and then performs operations/actions.
-
 Result: Increased I/O.
+
+Q.Why does PySpark need Hadoop at all when running in local[] mode with no cluster?
+Ans: PySpark is built on top of Hadoop's filesystem abstraction layer — called HDFS — even when running locally. When you write files, Spark uses Hadoop's file system APIs under the hood to handle permissions, directory creation, and file writes. On Linux/Mac this works without winutils because the native libraries are compatible. On Windows, Spark needs winutils.exe to translate Hadoop's Unix file system calls into Windows equivalents. Without it, any operation that touches the filesystem — including writing Parquet — fails.
