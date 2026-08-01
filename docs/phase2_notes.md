@@ -3,7 +3,6 @@ Ans: Instead of processing the computations immediately, Spark remebers the opea
 
 Q2 — What is the difference between a transformation and an action?
 Ans: Any operation to be performed on the data set is a transformation and any operation that outputs the data explicitly is an action.
-Classify each of these as transformation or action and explain your reasoning:
 df.filter(...) ==> transformation
 df.groupBy(...).agg(...) ==> transformation
 df.show() ==> action
@@ -31,27 +30,22 @@ shuffles are expensive because data travels across the network between executor 
 Here [*] means use all available CPU cores on your machine — whatever number that is. If your machine has 8 cores, local[*] gives Spark all 8. If it has 4, it gets 4.
 It is not adaptive. It is simply "use everything available right now."
 The difference matters because:
-
 local[1] — tasks run one at a time, sequentially
-local[*] — tasks run in parallel across all cores, faster for large data
-
+local[*] — tasks run in parallel across all cores, faster for large data.
 In production Spark does not run locally at all — it runs on a cluster where the master URL is something like spark://host:7077. local[*] is a development convenience that simulates a cluster on your own machine.
+
 
 Partitions:
 Partition = Piece of data
-
 ↓
-
 Spark creates one Task for that partition
-
 ↓
-
 A Worker executes that Task
 
 # All actions are initiated and coordinated by the Driver. Some actions return results to the Driver (like show(), count(), collect()), while others perform work externally (like write()) and only return the status of the operation.
 
 inferSchema:
-Spark reads data to determine the types before building the final DataFrame schema. it has to inspect data before deciding on the schema. Thus in case of huge filespark inspects first with infer schema and hten for operations/ action. Result increased I/O
+Spark reads data to determine the types before building the final DataFrame schema. it has to inspect data before deciding on the schema. Thus in case of huge filespark inspects first with infer schema and then for operations/ action. Result increased I/O
 
 The real problem with inferSchema is:
 Spark reads a sample of the data to guess types. If the first 100 rows of amount are all whole numbers, Spark might infer integer instead of double. Row 50,000 has 9839.64 — now your pipeline fails or silently truncates decimals.
@@ -61,7 +55,7 @@ Thus schema inference requires Spark to inspect the data before processing it, w
 orderBy():
 orderBy is a wide transformation because it requires a shuffle. All data must be sorted globally across partitions, not just within each partition. This is one of the most expensive operations in Spark. In production you only sort when absolutely necessary.
 
-Output of volume aggregation is like 8.550078961000006E7. Spark is displaying large doubles in scientific notation. This is fine for pipeline processing but will need formatting in Power BI
+* Output of volume aggregation is like 8.550078961000006E7. Spark is displaying large doubles in scientific notation. This is fine for pipeline processing but will need formatting in Power BI *
 
 Q1: Your aggregation produced 2,729 rows from 6.3M. Where did the other rows go — what happened to them conceptually?
 -->  Conceptually, the 6.3M rows are grouped together based on their similarity viz. step and type in our case - aggregation collapses rows into groups. The 6.3M individual transaction rows are reduced to 2,729 group summaries. The original rows are not deleted — they are summarised. The original DataFrame df still exists in memory unchanged. Only volume_df has 2,729 rows.
@@ -205,3 +199,5 @@ Result: Increased I/O.
 
 Q.Why does PySpark need Hadoop at all when running in local[] mode with no cluster?
 Ans: PySpark is built on top of Hadoop's filesystem abstraction layer — called HDFS — even when running locally. When you write files, Spark uses Hadoop's file system APIs under the hood to handle permissions, directory creation, and file writes. On Linux/Mac this works without winutils because the native libraries are compatible. On Windows, Spark needs winutils.exe to translate Hadoop's Unix file system calls into Windows equivalents. Without it, any operation that touches the filesystem — including writing Parquet — fails.
+
+After writing the output we see '_SUCCESS' and '._SUCCESS.crc' files in every output folder. These are Hadoop marker files — Spark writes them to signal that a job completed successfully. They contain no data. Every downstream tool that reads Parquet knows to ignore them.

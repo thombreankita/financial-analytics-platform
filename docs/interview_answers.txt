@@ -1,0 +1,26 @@
+Q1: What is the difference between a Spark transformation and a Spark action? Give two examples of each from your project.
+Ans: Spark transformations are the operations performed on the data and are added in the DAG plan by optimizer and do not return any result. 
+Spark action is the one that returns a result set after computing all the transformations.Transformations: df.filter(...), df.groupBy('type').agg(...), df.withColumn('risk', ...), df.join(...)
+Actions: df.count(), df.show(), df.write.parquet(...). Write is an action. It triggers execution and writes to disk.
+
+Q2. Why is Parquet preferred over CSV for analytical workloads? Give three specific reasons.
+Ans: Parquet is a columnar storage and is efficient for storage and fetching operation and efficient for operations like predicate pushdown and partition pruning etc
+and schema enforcement. Parquet stores the schema inside the file itself — column names, data types, nullability. When you read a Parquet file you always know exactly what you are getting. 
+CSV has no schema — you have to infer it or define it separately, which is error-prone. This is why we need inferSchema=True for CSV but Parquet files are self-describing.
+
+Q3. What does df.groupBy('type').agg(F.count('*')) do — explain every part of this expression including what the * means.
+Ans: df.groupBy('type').agg(F.count('*'))==> a df is grouped by type column and the resultset give count of rows specified to taht particular type. agg method encapsulated the operations to 
+be performed on the aggregated data and * here means count all the rows, eliminating the possibility of missing any row where the type is present but any particular column is null while aggregating over a columnar format parquet.
+Basically it means it will go through all the rows without missing any null or blanks.
+
+Q4.What is a SparkSession and why is there only one per application? What does getOrCreate() prevent?
+Ans: Spark session creates a getway or portal to apply distributed computing  and getocreate prevents creating multiple spark sessions. There is only one session per application 
+because it would be difficult to manage 2 sessions accessing the same data sources and using same cores it would be redundant and create a overhead. 
+getOrCreate() is specifically important in notebook environments like Databricks where a SparkSession may already exist from a previous cell. Without getOrCreate() calling SparkSession.builder.build() would either error or create a conflicting session. 
+getOrCreate() returns the existing session if one is alive, creates a new one only if none exists.
+
+Q5. Your PySpark job runs fine locally but would be slow on truly large data — say 100GB instead of 470MB. What are three specific things you would investigate to improve performance?
+Ans: Three specific things to investigate:
+1 — Shuffle operations. Check the Spark UI for shuffle read/write size. Wide transformations like groupBy and join trigger shuffles. If shuffle data is large, you can reduce it by filtering data before grouping or using broadcast joins for small DataFrames — which we did with F.broadcast(df_grp).
+2 — Data skew. Check if partitions are balanced. If 90% of  data is PAYMENT type and we partition by type, one partition processes most of the data while others sit idle. We detect this by comparing partition sizes with df.rdd.glom().map(len).collect().
+3 — Number of partitions. By default Spark creates 200 shuffle partitions. For 470MB of data that is too many — most partitions would be tiny, creating overhead. We would set spark.conf.set("spark.sql.shuffle.partitions", "8") to match core count.
