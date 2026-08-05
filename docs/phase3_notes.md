@@ -1,4 +1,4 @@
-*** DBT ***
+*** DBT Notes***
 
 Q1. What problem does dbt solve that plain SQL does not?
 Ans: Version control for SQL. Plain SQL in stored procedures or views has no version history. You cannot see who changed what and when. dbt models are .sql files in Git — every change is tracked, reviewable, and reversible.
