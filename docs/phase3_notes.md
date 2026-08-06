@@ -19,6 +19,8 @@ The rule of thumb: staging models are usually views (lightweight, always fresh),
 Q4. What is data lineage and why does it matter?
 Ans: If the source data or file changes, it might affect all the parts depending on that file. If a pipe fails at any point of time without lienage it becomes difficult to manually trace which tables it depends on. With dbt lineage you open the lineage graph and immediately sees which table depends on which one For ex.: mart_daily_fraud_summary → stg_transactions → raw.paysim. You check stg_transactions first. The fix is in one place. Total diagnosis time: 2 minutes instead of 20.
 
+
+
 Q5. What does {{ ref('stg_transactions') }} do in a dbt model?
 Ans: {{ ref('stg_transactions') }} does two things:
 First — it resolves to the correct table name in the correct schema for your environment. In development it might be dev.stg_transactions. In production prod.stg_transactions. You never hardcode environment names.
