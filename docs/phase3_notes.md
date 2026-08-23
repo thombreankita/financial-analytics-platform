@@ -28,3 +28,6 @@ Second — and this is the important one — dbt uses ref() to build its depende
 One-sentence summary: ref() is how dbt knows what depends on what, and how it ensures models always run in the correct order.
 
 Notes: Git and dbt solve completely different problems. Git is a version control system that tracks changes to files and enables collaboration. dbt is a transformation framework that understands the relationships between data models, manages dependencies, enables testing and documentation, and orchestrates SQL transformations. In practice, production teams use both together because they complement each other.
+SQL transforms data; dbt provides the engineering framework for organizing, connecting, testing, documenting, and executing SQL transformations at scale.
+dbt manages the transformation layer inside/against the warehouse.
+The warehouse is still responsible for storing and processing the data.
