@@ -31,3 +31,7 @@ Notes: Git and dbt solve completely different problems. Git is a version control
 SQL transforms data; dbt provides the engineering framework for organizing, connecting, testing, documenting, and executing SQL transformations at scale.
 dbt manages the transformation layer inside/against the warehouse.
 The warehouse is still responsible for storing and processing the data.
+
+## Connection vs Cursor:
+The connection establishes communication between the database and the program.
+The cursor is what you use to execute SQL statements through that connection.

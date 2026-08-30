@@ -29,6 +29,8 @@ __pycache__/
 # dbt generated folders
 dbt_project/target/
 dbt_project/logs/
+dbt_project/financial_analytics/dev.duckdb
+dbt_project/financial_analytics/prod.duckdb
 
 # Airflow logs
 airflow/logs/
