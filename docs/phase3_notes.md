@@ -35,3 +35,11 @@ The warehouse is still responsible for storing and processing the data.
 ## Connection vs Cursor:
 The connection establishes communication between the database and the program.
 The cursor is what you use to execute SQL statements through that connection.
+
+In dbt specifically, SELECT * breaks lineage tracking. dbt cannot document columns it does not know about explicitly. When you run dbt docs generate, undeclared columns from SELECT * do not appear in the documentation. Always select columns explicitly so dbt knows what your model produces.
+
+Q1. Your staging model reads from paysim_raw which is raw data you loaded externally — not a dbt model. To reference it in dbt you use {{ source() }} not {{ ref() }}. What is the difference between the two and when do you use each?
+Ans: {{ source() }} is usually used to reference a dataset external to the dbt. For any table created and situated inside the dbt we use {{ ref() }} as {{ ref() }} helps creates a linkage between the tables in our dbt. any table derieved from paysim_raw   willbe using {{ ref() }}. but since the  paysim_raw is the base inside the dbt we use {{ source() }}  here.
+
+Q3: You will write SELECT with explicit column selection — no SELECT *.
+Ans:It means that for the staging purpose only the views are created. whatever data will be the result of staging it will be created as a view.Only the gold layer will be created as a physical table.
