@@ -47,3 +47,5 @@ Ans:It means that for the staging purpose only the views are created. whatever d
 --> The view stored no data. When you queried stg_transactions, DuckDB executed the underlying SELECT statement against paysim_raw in real time. The view is just a saved query — a named SQL expression. Every time you query it, it reads from paysim_raw fresh. This is why views are appropriate for staging — they are always current and use zero additional storage.
 -->The WARNING says models.financial_analytics.marts has no resources.It means dbt_project.yml has a config block for marts but no SQL files exist in models/marts/ yet. dbt is telling you the config exists but has nothing to apply it to.
 The view stored no data. When you queried stg_transactions, DuckDB executed the underlying SELECT statement against paysim_raw in real time. The view is just a saved query — a named SQL expression. Every time you query it, it reads from paysim_raw fresh. This is why views are appropriate for staging — they are always current and use zero additional storage.
+
+### A data test is a SQL query that tries to find bad records.
