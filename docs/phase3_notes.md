@@ -49,3 +49,24 @@ Ans:It means that for the staging purpose only the views are created. whatever d
 The view stored no data. When you queried stg_transactions, DuckDB executed the underlying SELECT statement against paysim_raw in real time. The view is just a saved query — a named SQL expression. Every time you query it, it reads from paysim_raw fresh. This is why views are appropriate for staging — they are always current and use zero additional storage.
 
 ### A data test is a SQL query that tries to find bad records or SELECT statements that seek to return failing records.
+
+--> generic tests are parameterized queries that accept arguments.
+Normally, a data test query will calculate failures as part of its execution. If you set the optional --store-failures flag, the store_failures, or the store_failures_as configs, dbt will first save the results of a test query to a table in the database, and then query that table to calculate the number of failures.
+
+| Test              | Question                                |
+| ----------------- | --------------------------------------- |
+| `unique`          | Are there duplicates?                   |
+| `not_null`        | Are there NULLs?                        |
+| `accepted_values` | Are values from the allowed list?       |
+| `relationships`   | Does this value exist in another model? |
+
+--> specifically recommend testing assumptions about source data.
+
+Q1. dbt has four built-in schema tests.
+- The four built in schemas are unique, not null, relatioships and accepted values. Unique test returns the rows which are not unique stating where the test fails, not null checks if any rows have null value, relationships checks the referential integrity and accepted values check if the correct vales are present or any additional values in specified columns are also present.
+
+Q2.Your stg_transactions has an is_fraud column that should only contain 0 or 1. Which built-in test catches this?
+- accepted values catches it
+
+Q3. What is the difference between a schema test and a custom data test in dbt?
+- custom data tests are built based on the specific business logic that is needed in any particuar cas. Schema tests will only check for any data or integrity constraints mainly.
