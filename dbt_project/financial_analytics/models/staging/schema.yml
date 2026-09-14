@@ -4,5 +4,35 @@ sources:
   - name: raw
     schema: main
     tables:
+
+    
       - name: paysim_raw
         description: "The raw data from source."
+
+models:
+  - name: stg_transactions
+    description: "The staging view where the datatypes of each column as well as the names of the columns are aligned as per the proper data present in the table"
+    columns:
+      - name: sender_id
+        tests:
+          - not_null
+      - name: amount
+        tests:
+          - not_null
+      - name: is_fraud
+        tests:
+          - not_null
+          - accepted_values:
+              arguments: 
+                values: [0, 1]
+      - name: transaction_type
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['PAYMENT', 'TRANSFER', 'CASH_OUT', 'CASH_IN', 'DEBIT']
+      - name : sender_balance_before
+        tests:
+          - not_null
+      - name: receiver_id
+        tests:
+           - not_null
