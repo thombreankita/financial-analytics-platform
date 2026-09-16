@@ -73,3 +73,10 @@ Q3. What is the difference between a schema test and a custom data test in dbt?
 
 Q4. A failing dbt test means data quality issue found. What should happen in your pipeline when dbt test fails — should the pipeline stop, log and continue, or something else? And who decides this — the data engineer or the business?
 - The data engineer defines which tests are blocking and which are warnings. In dbt you can set severity: warn on a test so it logs the failure but does not stop the pipeline. Without that setting, a failed test returns a non-zero exit code which Airflow treats as a task failure and stops the DAG. So the engineer decides by configuring severity — the business decides which data quality rules are non-negotiable.Critical tests — like not_null on sender_id or accepted_values on is_fraud — should be blocking. If fraud labels are corrupted, everything downstream is wrong. Less critical tests — like balance anomaly checks — can be warnings that log and continue.
+
+
+Q1: Your mart model uses {{ ref('stg_transactions') }} not {{ source() }}. Write the exact FROM clause you will use.
+
+Q2: Your mart model is materialised as a table — set in dbt_project.yml. What does this mean differently from the staging view? Why does the mart layer need to be a table specifically?
+
+Q3: Write the business question this mart model answers in one sentence. Every model should have a clear purpose.
