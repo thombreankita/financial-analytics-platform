@@ -1,0 +1,13 @@
+version: 2
+
+sources:
+  - name: stg_transactions
+    schema: main
+    tables:
+      - name: stg_transactions
+        description: "Cleaned Data"
+      
+models:
+  - name: mart_daily_fraud_summary
+    description: 
+    
