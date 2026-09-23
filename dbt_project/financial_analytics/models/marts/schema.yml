@@ -1,13 +1,28 @@
 version: 2
-
-sources:
-  - name: stg_transactions
-    schema: main
-    tables:
-      - name: stg_transactions
-        description: "Cleaned Data"
       
 models:
   - name: mart_daily_fraud_summary
-    description: 
-    
+    description: "The important columns of the staging views are checked for the correct values and valid types"
+    columns:
+      - name: step_hour
+        tests:
+          - not_null
+      
+      - name: transaction_type
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['PAYMENT', 'TRANSFER', 'CASH_OUT', 'CASH_IN', 'DEBIT']
+          - relationships:
+              arguments: 
+                to: ref('stg_transactions')
+                field: transaction_type
+              
+      - name: total_transactions
+        tests:
+          - not_null
+      - name: fraud_rate_pct
+        tests:
+          - not_null
+

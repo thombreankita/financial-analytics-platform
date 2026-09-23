@@ -7,7 +7,7 @@ select
     cast(nameOrig as varchar) as sender_id,
     cast(oldbalanceOrg as double) as sender_balance_before,
     cast(newbalanceOrig as double) as sender_balance_after,
-    cast(nameDest as varchar) as receiver_id,
+    cast(nameDest as varchar) as receiver_id, 
     cast(oldbalanceDest as double) as receiver_balance_before,
     cast(newbalanceDest as double) as receiver_balance_after,
     cast(isFraud as int) as is_fraud,
