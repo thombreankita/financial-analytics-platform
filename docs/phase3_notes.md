@@ -76,7 +76,10 @@ Q4. A failing dbt test means data quality issue found. What should happen in you
 
 
 Q1: Your mart model uses {{ ref('stg_transactions') }} not {{ source() }}. Write the exact FROM clause you will use.
+-> select * from {{ ref('stg_transactions') }}
 
 Q2: Your mart model is materialised as a table — set in dbt_project.yml. What does this mean differently from the staging view? Why does the mart layer need to be a table specifically?
+the mart layer has the tables that are directly fetched in the powerbi thus the fetch operation is faster on the table and hence the mart layer is materialised as table
 
 Q3: Write the business question this mart model answers in one sentence. Every model should have a clear purpose.
+-> this mart model gives the summary of the data viz. PaySim and how many records are frauds and belong to which transaction type
