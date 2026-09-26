@@ -83,3 +83,21 @@ the mart layer has the tables that are directly fetched in the powerbi thus the 
 
 Q3: Write the business question this mart model answers in one sentence. Every model should have a clear purpose.
 -> this mart model gives the summary of the data viz. PaySim and how many records are frauds and belong to which transaction type
+
+Q1. What is the difference between {{ ref() }} and {{ source() }} in dbt? Give an example of when you used each in your project.
+Ans: ref() is used when the table or view that needs to be considered as source is already present inside dbt. Using ref() creates a linkage between thetables thus stating what all tables and views are getting affected if there is any change in one of the table.
+source() is used when the data source needed is to be referenced from outside the dbt i.e. external source to dbt needs to be fetched.
+
+Q2. What is the difference between a view materialisation and a table materialisation? Why did you choose view for staging and table for marts?
+Ans: View materialisation creates the view in runtime, while the table materialisation stores the resultset in a physical table that can be easily fetched in the final application thus reducing the fetching overhead. Thus the table materialisation is used in the marts as the physical tables can be easily fetched in the application.
+
+Q3. If a dbt test fails in production at 6am, walk through your exact response process — what do you check first, second, third?
+Ans: Step 1- Run the dbt test. Identify which test has failed. the failing test will specify the column name that gave the issue.
+Step 2 - check the source if the nulls are also present in the source table.
+Step 3 -IF the nulls are not present in source, and the column giving issue is a critical column, block the pipeline until issue is fixed. If the column is not severe and doesn't affect the results, a warning must be raised but no need to block the pipe.
+
+Q4. What is data lineage and how does dbt's ref() function enable it? What would break if you hardcoded table names instead of using ref()?
+Ans: Data lineage shows which table is dependent on which table, basically maintaining a track of dependency. If the table names are directly hardcoded then if any table structure gets changed, the changes also need to implemented in the dependent tables and the hardcoded table names make it tideious to backtrack. Lineage on the other hand readily has the list of dependent views that can be modified as required.
+
+Q5. You have 13 tests passing. A new engineer joins and adds a column to paysim_raw that contains nulls. Which of your tests would catch this and which would not? Why?
+Ans: This test could not be noticed untill the pipeline failes at production because there is no entry of this new column in the schema file, thus this will go unnoticed. This is because we have not used select * in our transactioin.sql, wehave specified the column names required. The lineage tracks model dependencies, not column changes. Thus the new column will be completely ignored in the staging table itself
