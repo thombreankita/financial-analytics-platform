@@ -33,3 +33,18 @@ What does this line mean? What happens if validate fails — does dbt_run still 
 Ans: The >> operator is Airflow's way of expressing a dependency between tasks. Run ingest before validate, and run validate before dbt_run.dbt_run won't execute because its upstream dependency, validate, did not successfully complete. >> means establishes a dependency.Airflow then uses that dependency to determine whether a task is eligible to run.
 
 ## Airflow doesn't replace your ingestion, validation, PySpark/dbt logic. It orchestrates them. ##
+
+To start the container:
+astro dev start
+To stop :astro dev stop
+to chech current running sessions:astro dev ps
+
+
+Q1: Your DAG file must live in a specific folder for Airflow to detect it. Based on what astro dev init created, where does it go?
+Ans: I think it goes in the config or the dags folder created by the airflow
+
+Q2. What does schedule=None mean? How is it different from schedule='@daily'?
+Ans: Maybe it means that the DAGshould not execute the pipe on a schedule. Daily schedule will run the pipe for loading and performing data operations daily. MAybe it has something to with the catchup=False
+
+Q3. You will use PythonOperator to call your ingestion main() function. What does python_callable mean in this context?
+Ans : I think it means a function that can be called using a python operator.
