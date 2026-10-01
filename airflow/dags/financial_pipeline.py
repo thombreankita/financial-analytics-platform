@@ -25,5 +25,4 @@ with DAG(
         task_id = "Validate_data",
         python_callable = validation_task
     )
-
     run_ingestion >> run_validation
