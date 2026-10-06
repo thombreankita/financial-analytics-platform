@@ -14,3 +14,5 @@ select
     cast(isFlaggedFraud as int) as is_flagged_fraud
 from {{ source('raw', 'paysim_raw') }}
 where amount IS NOT NULL AND amount > 0
+
+#
