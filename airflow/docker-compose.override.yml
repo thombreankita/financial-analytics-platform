@@ -1,0 +1,10 @@
+services:
+  scheduler:
+    volumes:
+      - ../:/usr/local/airflow/project
+  webserver:
+    volumes:
+      - ../:/usr/local/airflow/project
+  triggerer:
+    volumes:
+      - ../:/usr/local/airflow/project
