@@ -31,8 +31,8 @@ Starting from raw synthetic financial data (PaySim — 6.3 million transactions,
 | Phase 0 | Python basics + environment setup | ✅ Complete |
 | Phase 1 | Python ingestion layer with validation | ✅ Complete |
 | Phase 2 | PySpark transformation layer | ✅ Complete |
-| Phase 3 | dbt modeling layer | 🔄 In Progress |
-| Phase 4 | Airflow orchestration | ⏳ Upcoming |
+| Phase 3 | dbt modeling layer | ✅ Complete |
+| Phase 4 | Airflow orchestration | 🔄 In Progress |
 | Phase 5 | Power BI dashboard + documentation | ⏳ Upcoming |
 
 ---
